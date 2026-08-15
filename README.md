@@ -20,7 +20,7 @@ My approach is to train an autoencoder on a clean, authenticated signal only. Th
 
 ## Method Overview
 
-- Signals are generated as complex **IQ (in-phase/quadrature) data**, not
+- Signals are generated as complex **IQ (in-phase/quadrature) data**, and not as
   real-valued waveforms, to preserve phase information the way real RF
   hardware does.
 - A **complex-valued convolutional autoencoder** takes I and Q as two input
