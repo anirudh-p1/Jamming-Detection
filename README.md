@@ -3,17 +3,11 @@
 ## The Problem
 
 Modern radar and IFF (identify friend-or-foe) systems rely on recognising a
-known, clean signal — a specific chirp, at a specific frequency, arriving at
-an expected time. Electronic attack disrupts this in two very different ways:
+known, clean signal such as a specific chirp at a specific frequency which arrives at an expected time. Electronic attacks disrupt this in two different ways:
 
-- **Noise jamming** — flood the receiver with broadband noise so the real
-  signal is buried. Easy to generate, easy(ish) to detect: the receiver just
-  looks "noisy."
-- **Deceptive jamming (DRFM / Range-Gate Pull-Off)** — a Digital Radio
-  Frequency Memory jammer *records* the real chirp, delays it slightly, and
-  replays it back. To the receiver this doesn't look like noise at all — it
-  looks like a second, fake target. This is a much harder problem: the
-  jammer isn't hiding, it's lying.
+- **Noise jamming** — This floods the receiver with broadband noise so the real signal gets buried. This is easy to generate, and easy(ish) to detect because the receiver just looks noisy. Noise jamming means you know the general direction of the aircraft in some range, but can't tell how close or far it is relative to your position.
+  
+- **Deceptive jamming (DRFM / Range-Gate Pull-Off)** — Here, a Digital Radio Frequency Memory (DRFM) jammer records the real chirp, delays it slightly and then replays it back. That means to a receiver, the signal looks like a second, fake target. Deceptive jamming records the chirp that the enemy transmits to identify where you are, and then replays it with a delay, and since both the signal from the aircraft itself and this delayed recording gets sent to the enemy, they see 2 planes. But since the chirp that is replayed is a much juicier signal, the enemy radar believes that is the plane. (Radars use Automatic Gain Control (AGC), so when they see this juicy signal, they dial down sensitivity to prevent the circuits from being overloaded, which means the real reflection of the plane gets pushed underneath the noise.) This means DRFM can create the illusion of a fake plane flying away, by slowly increasing the intervals at which the chirp is replayed by. Since radar computers are programmed to follow moving targets, it would follow the fake signal until it gets far enough away, at which point the plane could turn of the replay, leaving no trace of any plane (presumably the plane has travelled outside the range of detection in that time). 
 
 A system that can only catch noise jamming isn't solving the interesting
 part of this problem. The goal here is to build a detector that can flag
