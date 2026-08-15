@@ -5,21 +5,18 @@
 Modern radar and IFF (identify friend-or-foe) systems rely on recognising a
 known, clean signal such as a specific chirp at a specific frequency which arrives at an expected time. Electronic attacks disrupt this in two different ways:
 
-- **Noise jamming** — This floods the receiver with broadband noise so the real signal gets buried. This is easy to generate, and easy(ish) to detect because the receiver just looks noisy. Noise jamming means you know the general direction of the aircraft in some range, but can't tell how close or far it is relative to your position.
+- **Noise jamming** — This floods the receiver with broadband noise so the real signal gets buried. This is easy to generate, and easy(ish) to detect because the receiver just looks noisy.
+- Noise jamming means you know the general direction of the aircraft in some range, but can't tell how close or far it is relative to your position.
   
-- **Deceptive jamming (DRFM / Range-Gate Pull-Off)** — Here, a Digital Radio Frequency Memory (DRFM) jammer records the real chirp, delays it slightly and then replays it back. That means to a receiver, the signal looks like a second, fake target. Deceptive jamming records the chirp that the enemy transmits to identify where you are, and then replays it with a delay, and since both the signal from the aircraft itself and this delayed recording gets sent to the enemy, they see 2 planes. But since the chirp that is replayed is a much juicier signal, the enemy radar believes that is the plane. (Radars use Automatic Gain Control (AGC), so when they see this juicy signal, they dial down sensitivity to prevent the circuits from being overloaded, which means the real reflection of the plane gets pushed underneath the noise.) This means DRFM can create the illusion of a fake plane flying away, by slowly increasing the intervals at which the chirp is replayed by. Since radar computers are programmed to follow moving targets, it would follow the fake signal until it gets far enough away, at which point the plane could turn of the replay, leaving no trace of any plane (presumably the plane has travelled outside the range of detection in that time). 
+- **Deceptive jamming (DRFM / Range-Gate Pull-Off)** — Here, a Digital Radio Frequency Memory (DRFM) jammer records the real chirp, delays it slightly and then replays it back. This means to a receiver, the signal looks like a second, fake target.
+- Deceptive jamming records the chirp the enemy use to identify where you are, and then replays an amplified version with a delay, starting with 0 delay then gradually increasing, to change the position of the fake plane. Radars use Automatic Gain Control (AGC) so when they see the juicier, amplified signal, they dial down sensitivity to prevent the circuits from being overloaded, which means the real reflection of the plane gets pushed underneath general noise, so is ignored. This means DRFM can create the illusion of a fake plane flying away, by slowly increasing the intervals at which the chirp is replayed by. Since radar computers are programmed to follow moving targets, it would follow the fake signal until it gets far enough away, at which point the plane could turn of the replay, leaving no trace of any plane (presumably the plane has travelled outside the range of detection in that time). 
 
-A system that can only catch noise jamming isn't solving the interesting
-part of this problem. The goal here is to build a detector that can flag
-*both* — including the deceptive case, where the "attack" looks structurally
-like a real signal.
+The goal here is to build a detector that can flag both, including the deceptive case from DRFM where the attack looks like a real signal.
 
-**Approach:** train an autoencoder on clean, authenticated signal only (the
-IFF framing makes this natural — you only ever get to train on your own
-friendly frequencies). Anything the model reconstructs badly, or reconstructs
-*as* jamming, gets flagged. No jamming examples are needed at training time,
-which matters in practice — you can't train on jamming that hasn't been
-invented yet.
+
+**Approach** 
+
+My approach is to train an autoencoder on a clean, authenticated signal only. This is like IFF, where you only ever get to train on your own friendly frequencies. Then anything the model reconstructs badly, or reconstructs as jamming gets flagged. You don't need jamming examples during training, and this matters because in practice, you can't train on jamming that hasn't been invented yet.
 
 ## Method Overview
 
